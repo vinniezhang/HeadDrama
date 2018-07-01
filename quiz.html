@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Some Questions for You</title>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/p5.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/addons/p5.dom.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/addons/p5.sound.js"></script>
+	<link href="https://fonts.googleapis.com/css?family=Architects+Daughter|Bangers|Codystar|Creepster|Faster+One|Fruktur|Sigmar+One|Indie+Flower|Dancing+Script|Sacramento|Fira+Sans+Condensed|Dosis|Poppins" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/questions.css">
+</head>
+
+<body>
+	<div id="startScreen">
+		<button id="start-btn">START QUIZ</button>
+	</div>
+
+	<div id = "quiz">
+		<div id="queLine"></div>
+		<div id="container">
+			<div id="choiceA" onclick="AisClicked()" onmouseover="AisTouched()" onmouseout="mouseLeftA()"></div>
+			<div id="choiceB" onclick="BisClicked()" onmouseover="BisTouched()" onmouseout="mouseLeftB()"></div>
+			<div id="choiceC" onclick="CisClicked()" onmouseover="CisTouched()" onmouseout="mouseLeftC()"></div>
+		</div>
+	</div>
+
+
+
+</body>
+
+<script type="text/javascript">
+
+	var questions = ["Imagine you're walking in an open field, <br/> what color is the sky?", "If you could have one wish granted, what would you wish for?","If you could go anywhere for a day, where would it be?", "Imagine your friend is about to die in front of you, what are his last words?", "You've been travelling alone for 2 days with no food or water. You find a deserted cabin, what food is on the table inside?", "Which Marvel superhero do you identify with most?", "Which one of these movies would you watch on a Friday night?"];
+
+	var As = ["grey.png","knife.svg","desert.svg","regret.png","bull_skull.svg","hulk.gif","it.jpg"];
+	var Bs = ["orange.png","heart.svg","forest.svg","annie.png","dinner.svg","captain_a.gif","the_notebook.jpg"];
+	var Cs = ["blue.png","bitcoins.svg","beach.svg","ouch.png", "fast_food.svg","deadpool.gif","home_alone.png"];
+
+	var Asrc, Bsrc, Csrc;
+
+	var dramaSrcList = ["drama_01.html", "drama_02.html", "drama_03.html", "drama_04.html"];
+	//01:barbie; 02:brick; 03:rainforest; 04:toilet
+
+	var qIdx = 0;
+	var choiceIdx = 0;
+
+	var scary = 0;    //A
+	var romantic = 0; //B
+	var comedy = 0;   //C
+
+	var isScary = false;
+	var isRomantic = false;
+	var isComedy = false;
+
+	//audio vars
+	//choices:hover
+	var greySound, pinkSound, blueSound;
+	var gSoundPlaying  = false;
+	var pSoundPlaying  = false;
+	var bSoundPlaying = false;
+	var revengeSound, dateSound, coinSound;
+	var desertSound, rfSound, beachSound;
+	var desertSoundPlaying  = false;
+	var rfSoundPlaying  = false;
+	var beachSoundPlaying = false;
+
+	//bgms
+	var bgmS, bgmR, bgmC;
+
+	var dramaSrc;
+	var thei;
+
+
+	//draw() rects once used
+	//var fillA, fillB, fillC;
+	//var Ax, Ay, Bx, By, Cx, Cy;
+	//var rectA, rectB, rectC;
+
+
+	var textR;
+
+
+
+	function preload(){
+		greySound = loadSound("aud/thunder.wav");
+		pinkSound = loadSound("aud/sunset.mp3");
+		blueSound = loadSound("aud/bird_chirp.wav");
+
+		coinSound = loadSound("aud/coin.wav");
+
+		desertSound = loadSound("aud/desert_sizzle.wav");
+		rfSound = loadSound("aud/rainforest.mp3");
+		beachSound = loadSound("aud/beach_seagull.mp3");
+
+
+		bgmS = loadSound("aud/horror.wav");
+		bgmR = loadSound("aud/bgm_r.wav");
+		bgmC = loadSound("aud/bgm_c.mp3");
+	}
+
+
+
+	function setup(){
+		//noCanvas();
+
+		Que = createP("Which dog would you want to come home to?");
+		Que.parent("queLine");
+
+		choiA = createImg("img/dog_s.svg", "oops");
+		choiB = createImg("img/dog_r.svg", "oops");
+		choiC = createImg("img/dog_c.svg", "oops");
+
+
+		choiA.parent("choiceA");
+		choiB.parent("choiceB");
+		choiC.parent("choiceC");
+
+		choiA.id("Apic");
+		choiB.id("Bpic");
+		choiC.id("Cpic");
+
+		choiA.attribute("width", "100%");
+		choiB.attribute("width", "100%");
+		choiC.attribute("width", "100%");
+
+		// choiA.attribute("onclick", "'AisClicked()'")
+		//choiA.onclick = AisClicked();
+
+		startBG = createCanvas(windowWidth, windowHeight);
+		startBG.parent("startScreen");
+
+
+
+
+		//for canvas draw() once used
+		// background(175);h
+		// textSize(38);
+		// textAlign(CENTER);
+		// text(questions[0], windowWidth/2, 150);
+
+		// Ax = windowWidth/4;
+		// Ay = windowHeight*3/5;
+
+		// Bx = windowWidth/2;
+		// By = windowHeight*3/5;
+
+		// Cx = windowWidth*3/4;
+		// Cy = windowHeight*3/5;
+
+		// fillA = color(random(100, 130), random(105,140), 135);
+		// fillB = color(255, random(160, 255), 122);
+		// fillC = color(random(90,160), random(180,220), (255));
+
+		// Asrc = A_s[choiceIdx];
+		// Bsrc = B_s[choiceIdx];
+		// Csrc = C_s[choiceIdx];
+
+		// choiA.parent().attribute('onmouseover', 'AisTouched');
+		// choiB.parent().attribute('onmouseover', 'BisTouched');
+		// choiC.parent().attribute('onmouseover', 'CisTouched');
+
+		// choiA.parent().attribute('onmouseout', 'mouseLeftA');
+		// choiB.parent().attribute('onmouseout', 'mouseLeftB');
+		// choiC.parent().attribute('onmouseout', 'mouseLeftC');
+
+	}
+
+
+
+	function AisClicked() {
+		scary++;
+		isScary = true; isRomantic = false; isComedy = false;
+		nextQuestion();
+		console.log("scary:",scary, "romantic:",romantic, "comedy:",comedy);
+		greySound.stop();
+		desertSound.stop();
+}
+
+
+	function BisClicked() {
+		romantic++;
+		isScary = false; isRomantic = true; isComedy = false;
+		nextQuestion();
+		console.log("scary:",scary, "romantic:",romantic, "comedy:",comedy);
+		pinkSound.stop();
+		rfSound.stop();
+}
+
+
+	function CisClicked() {
+		comedy++;
+		isScary = false; isRomantic = false; isComedy = true;
+		nextQuestion();
+		console.log("scary:",scary, "romantic:",romantic, "comedy:",comedy);
+		blueSound.stop();
+		beachSound.stop();
+}
+
+
+	//mouse over functions
+
+	function AisTouched(){
+		if (qIdx == 1 && gSoundPlaying == false){
+			console.log("a over");
+			greySound.playMode('restart');
+			greySound.play();
+			gSoundPlaying = true;
+		} else if (qIdx == 2) {
+			//revengeSound.play();
+		} else if (qIdx == 3 && desertSoundPlaying == false) {
+			desertSound.playMode('restart');
+			desertSound.play();
+			desertSoundPlaying == true;
+		}
+	}
+	
+
+	function BisTouched(){
+		if (qIdx == 1 && pSoundPlaying == false){
+			console.log("b over");
+			pinkSound.playMode('restart');
+			pinkSound.setVolume(0.5);
+			pinkSound.play();
+			pSoundPlaying = true;
+		} else if (qIdx == 2) {
+			//dateSound.play();
+		} else if (qIdx == 3 && rfSoundPlaying == false) {
+			rfSound.setVolume(0.4);
+			rfSound.playMode('restart');
+			rfSound.play();
+			rfSoundPlaying == true;
+		}
+	}
+	
+
+	function CisTouched(){
+		if (qIdx == 1 && bSoundPlaying == false){
+			console.log("c over");
+			blueSound.playMode('restart');
+			blueSound.play();
+			bSoundPlaying = true;
+		} else if (qIdx == 2) {
+			coinSound.setVolume(0.6);
+			coinSound.play();
+		} else if (qIdx == 3 && beachSoundPlaying == false) {
+			beachSound.playMode('restart');
+			beachSound.play();
+			beachSoundPlaying == true;
+		}
+	}
+
+	//mouse left functions
+
+	function mouseLeftA(){
+		if (qIdx == 1){
+			console.log("a out");
+			greySound.pause();
+			gSoundPlaying = false;
+		} else if (qIdx == 2) {
+			//revengeSound.pause();
+		} else if (qIdx == 3) {
+			desertSound.pause();
+		}
+	}
+	
+
+	function mouseLeftB(){
+		if (qIdx == 1){
+			console.log("b out");
+			pinkSound.pause();
+			pSoundPlaying = false;
+		} else if (qIdx == 2) {
+			//dateSound.pause()
+		} else if (qIdx == 3) {
+			rfSound.pause();		}
+	}
+
+	
+	function mouseLeftC(){
+		if (qIdx == 1){
+			console.log("c out");
+			blueSound.pause();
+			bSoundPlaying = false;
+		} else if (qIdx == 2) {
+			coinSound.pause();
+		} else if (qIdx == 3) {
+			beachSound.pause();
+		}
+	}
+
+
+
+
+	function nextQuestion(){
+		//CSS property changes + move to next question
+		if (qIdx < questions.length){
+
+			if (qIdx == 1){
+				if (isScary == true){
+					select('body').style('background-color', "#141417");
+					select('#queLine').style('color', "white");
+				} else if (isRomantic == true){
+					select('body').style('background-color', "#F7A99C");
+					select('#queLine').style('color', "white");
+				} else if (isComedy == true){
+					select('body').style('background-color', "#A8D2E8");
+					select('#queLine').style('color', "white");
+				}
+
+			}
+
+			if (qIdx == 2){
+				if (isScary == true){
+					select('#queLine').style('font-family', "'Fruktur', cursive");
+				} else if (isRomantic == true){
+					select('#queLine').style('font-family', "'Codystar', cursive");
+				} else if (isComedy == true){
+					select('#queLine').style('font-family', "'Architects Daughter', cursive");
+				}
+
+			}
+
+
+			if (qIdx == 4){
+				if (isScary == true){
+					bgmS.play();
+				} else if (isRomantic == true){
+					bgmR.setVolume(0.7);
+					bgmR.play();
+				} else if (isComedy == true){
+					bgmC.play();
+				}
+
+			}
+
+
+			if (qIdx == 5){
+				if (isScary == true){
+
+				} else if (isRomantic == true){
+
+				} else if (isComedy == true){
+
+				}
+
+			}
+
+
+			if (qIdx == 6){
+				if (isScary == true){
+					
+				} else if (isRomantic == true){
+
+				} else if (isComedy == true){
+
+				}
+
+			}
+
+			if (qIdx == 7){
+				if (isScary == true){
+					select('#queLine').style('font-family', "'Creepster', cursive");
+				} else if (isRomantic == true){
+					select('#queLine').style('font-family', "'Sacramento', cursive");
+				} else if (isComedy == true){
+					select('#queLine').style('font-family', "'Indie Flower', cursive");
+				}
+
+			}
+
+
+
+			if (qIdx == 8){
+				if (isScary == true){
+					
+				} else if (isRomantic == true){
+
+				} else if (isComedy == true){
+
+				}
+
+			}
+
+		document.getElementById("queLine").innerHTML = questions[qIdx];
+		document.getElementById("Apic").src = "img/" + As[choiceIdx];
+		document.getElementById("Bpic").src = "img/" + Bs[choiceIdx];
+		document.getElementById("Cpic").src = "img/" + Cs[choiceIdx];
+		qIdx++;
+		choiceIdx++;
+
+
+	} else {
+		startDrama();
+	}
+
+}
+
+
+	function startDrama(){
+		//dramaSrc = dramaSrcList[thei];
+		//var dramaSrcList = ["drama_01.html", "drama_02.html", "drama_03.html", "drama_04.html"];
+		//01:barbie; 02:brick; 03:rainforest; 04:toilet
+
+		if (comedy >= 4){ 
+			thei = 3;
+		} else if (romantic >= 4 || (comedy > 2 && romantic > 2)){ 
+			thei = 1;
+		} else if ( scary >= 4  || (scary > 2 && romantic > 2)){
+			thei = 2;
+		} else if (scary > 2 && comedy > 2){
+			thei = 0;
+		} else {
+			thei = 0;
+		}
+
+
+		window.location.href = dramaSrcList[thei];
+
+	}
+
+
+	function draw(){
+		background(60, 20);
+
+		translate(width / 2, height / 2);
+		rotate(frameCount * 60);
+
+		push();
+		rectMode(CENTER);
+		noStroke();
+		fill(0);
+		rect(frameCount+100, frameCount+100, random(20,80), random(20,80));
+		pop();
+
+		push();
+		rectMode(CENTER);
+		noStroke();
+		fill(255, 30);
+		rect(random(windowWidth), random(windowHeight), random(20,80), random(20,80));
+		pop();
+
+		//console.log("Looping");
+	}
+
+
+	function windowResized(){
+		resizeCanvas(windowWidth, windowHeight);
+	}
+
+document.querySelector('#start-btn').addEventListener('click', function() {
+
+	document.getElementById('quiz').style.display = "block";
+	document.getElementById('startScreen').style.display = "none";
+	noLoop();
+
+	greySound.output.context.resume().then(() => {
+	console.log('Playback resumed successfully for grey');
+	});
+	pinkSound.output.context.resume().then(() => {
+	console.log('Playback resumed successfully for pink');
+	});
+	blueSound.output.context.resume().then(() => {
+	console.log('Playback resumed successfully for blue');
+	});
+	desertSound.output.context.resume().then(() => {
+	console.log('Playback resumed successfully for blue');
+	});
+	rfSound.output.context.resume().then(() => {
+	console.log('Playback resumed successfully for blue');
+	});
+	beachSound.output.context.resume().then(() => {
+	console.log('Playback resumed successfully for blue');
+	});
+	coinSound.output.context.resume().then(() => {
+	console.log('Playback resumed successfully for blue');
+	});
+	bgmS.output.context.resume().then(() => {
+	console.log('Playback resumed successfully for blue');
+	});
+	bgmR.output.context.resume().then(() => {
+	console.log('Playback resumed successfully for blue');
+	});
+	// bgmC.output.context.resume().then(() => {
+	// console.log('Playback resumed successfully for blue');
+	// });
+});
+	
+
+
+</script>
+
+</html>
+
+

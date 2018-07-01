@@ -1,0 +1,78 @@
+body{
+	margin:0;
+}
+
+a{
+	text-decoration:none;
+	color:#666666;
+}
+
+#button{
+	position: fixed;
+	top:15%;
+	left:80%;
+	transform: translate(-50%, -50%);
+	background-color:rgba(255, 255, 255, 0.4);
+	color:white;
+	border-radius:50%;
+	padding-top:30px;
+	padding-bottom:30px;
+	padding-right:15px;
+	padding-left:15px;
+	text-decoration:none;
+
+}
+
+#button:hover{
+	background-color:rgba(255, 255, 255, 0.8);
+	color:black;
+}
+
+
+#overText{
+	position: fixed;
+	top:50%;
+	left:53%;
+	transform: translate(-50%, -50%);
+}
+
+
+#title1{
+	color:#A996F4;
+	font-size: 160px;
+	font-style: bolder;
+	font-family: 'Faster One', cursive;
+}
+
+
+#title2{
+	color:#C9BDF4;
+	font-size:280px;
+	font-family: 'Faster One', cursive;
+
+	position: absolute;
+	top:-310px;
+	left:-100px;
+}
+
+
+#title3{
+	color:#C9BDF4;
+	font-size:280px;
+	font-family: 'Faster One', cursive;
+
+	position: absolute;
+	top:-90px;
+	left:-10px;
+}
+
+
+
+/* font-family: 'Bangers', cursive;
+font-family: 'Sigmar One', cursive;
+font-family: 'Faster One', cursive;
+font-family: 'Codystar', cursive;
+font-family: 'Fruktur', cursive;
+
+var colorArray = ["CEA5F4", "E696F4","F3D1F4", "F0D5F4", "C9BDF4", "A996F4"];
+/
